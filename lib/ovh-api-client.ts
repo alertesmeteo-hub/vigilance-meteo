@@ -66,3 +66,57 @@ export const ovhApi = {
   vigilanceDepartementMois: (departement: string, annee: number, mois: number) =>
     appelerApi<VigilanceDepartementJour[]>(`vigilance/departement-historique&departement=${departement}&annee=${annee}&mois=${mois}`),
 };
+
+// ───────────── Recherche avancée : bulletins de l'archive officielle (lecture seule) ─────────────
+
+export interface RechercheJour {
+  date: string;
+  couleur: Couleur;
+  /** OU binaire des phénomènes des bulletins du jour (le PHP peut le renvoyer sous forme de chaîne). */
+  masque: number | string;
+  nbBulletins: number;
+}
+
+export interface BulletinListe {
+  date: string;
+  heure: string;
+  producteur: string;
+  phenomenes: string;
+  masque: number;
+  bulletinId: number;
+  base: string;
+}
+
+export interface BulletinComplet {
+  date: string;
+  heure: string;
+  producteur: string;
+  phenomenes: string;
+  masque: number;
+  texte: string | null;
+  niveauMax: number | null;
+  /** statut : 1 début de suivi, 2 maintien, 3 fin. */
+  departements: { code: string; statut: number }[];
+}
+
+export interface ParamsRecherche {
+  debut: string;
+  fin: string;
+  /** '' = orange et rouge ; '2' jaune ; '3' orange ; '4' rouge. */
+  couleur: string;
+  /** '' = tous ; '1' à '9'. */
+  phenomene: string;
+  /** '' = France entière ; sinon code département. */
+  departement: string;
+}
+
+export const rechercheApi = {
+  recherche: (p: ParamsRecherche) =>
+    appelerApi<{ jours: RechercheJour[]; tronque: boolean }>(
+      `vigilance/recherche&debut=${p.debut}&fin=${p.fin}&couleur=${p.couleur}&phenomene=${p.phenomene}&departement=${p.departement}`,
+    ),
+
+  bulletinsDuJour: (date: string) => appelerApi<BulletinListe[]>(`vigilance/bulletins-jour&date=${date}`),
+
+  bulletin: (base: string, id: number) => appelerApi<BulletinComplet>(`vigilance/bulletin&base=${base}&id=${id}`),
+};
