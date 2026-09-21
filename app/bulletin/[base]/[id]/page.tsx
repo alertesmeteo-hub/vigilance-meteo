@@ -23,7 +23,11 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
     notFound(); // bulletin inconnu (l'API répond 404)
   }
 
-  const officiel = `${ARCHIVE_OFFICIELLE}/vigi.php?type=bulletin&id=${id}&base=${base}`;
+  // Base « carte_xxx » : carte de l'archive officielle, sans texte de bulletin.
+  const estCarteArchive = base.startsWith('carte_');
+  const officiel = estCarteArchive
+    ? `${ARCHIVE_OFFICIELLE}/vigi.php?type=carte&id=${id}&base=${base.slice(6)}`
+    : `${ARCHIVE_OFFICIELLE}/vigi.php?type=bulletin&id=${id}&base=${base}`;
   const parStatut = new Map<number, string[]>();
   for (const d of b.departements) parStatut.set(d.statut, [...(parStatut.get(d.statut) ?? []), d.code]);
 
@@ -89,14 +93,16 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
         </pre>
       ) : (
         <p style={{ background: '#fffaeb', border: '1px solid #fedf89', borderRadius: 10, padding: 14 }}>
-          Le texte de ce bulletin n’a pas encore été importé sur ce site.
+          {estCarteArchive
+            ? 'L’archive officielle ne contient, pour cette heure, que la carte de vigilance : il n’existe pas de texte de bulletin.'
+            : 'Le texte de ce bulletin n’a pas encore été importé sur ce site.'}
         </p>
       )}
 
       <p style={{ fontSize: 13, color: '#667085' }}>
         Source : {b.carte ? 'Météo-France (données publiques data.gouv.fr)' : 'archive officielle de la vigilance, Météo-France'}{b.carte ? '.' : ' ·'}{' '}
         {!b.carte && <a href={officiel} target="_blank" rel="noopener noreferrer" style={{ color: '#3157d5' }}>
-          ouvrir le bulletin original
+          {estCarteArchive ? 'ouvrir la carte originale' : 'ouvrir le bulletin original'}
         </a>}
         {!b.carte && '.'}
       </p>
