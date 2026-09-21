@@ -46,6 +46,8 @@ export interface VigilanceNationalJour {
   date: string;
   couleur: Couleur;
   commentaire: string | null;
+  /** Phénomènes du jour (n = numéro Météo-France, c = couleur, 0 si inconnue pour cette période). */
+  phenomenes?: { n: number; c: number }[];
 }
 
 export interface VigilanceDepartementJour {
