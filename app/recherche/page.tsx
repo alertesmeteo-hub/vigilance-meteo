@@ -21,7 +21,7 @@ const dateFr = (iso: string) =>
   new Date(`${iso}T12:00:00Z`).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
 const champ: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: 4, fontSize: 14, fontWeight: 600 };
-const saisie: React.CSSProperties = { padding: '9px 10px', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 15, background: '#fff' };
+const saisie: React.CSSProperties = { padding: '9px 10px', borderRadius: 8, border: '1px solid var(--bordure-champ)', fontSize: 15, background: 'var(--surface)' };
 
 /** Séries de jours consécutifs, les plus longues d'abord. */
 function series(jours: RechercheJour[]) {
@@ -92,14 +92,14 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
   return (
     <div>
       <h1 style={{ marginTop: 0 }}>Recherche avancée</h1>
-      <p style={{ color: '#475467' }}>
+      <p style={{ color: 'var(--texte-2)' }}>
         Recherchez toutes les échéances comprises dans une période, puis ouvrez directement le bulletin ancien ou récent
         correspondant.
       </p>
 
       <form
         method="get"
-        style={{ background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 16, display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))' }}
+        style={{ background: 'var(--surface)', border: '1px solid var(--bordure)', borderRadius: 12, padding: 16, display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))' }}
       >
         <input type="hidden" name="go" value="1" />
         <label style={{ ...champ, gridColumn: '1 / -1' }}>
@@ -155,34 +155,34 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
         </label>
         </div>
         <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10 }}>
-          <button type="submit" style={{ padding: '10px 18px', borderRadius: 8, border: 0, background: '#3157d5', color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
+          <button type="submit" style={{ padding: '10px 18px', borderRadius: 8, border: 0, background: 'var(--bouton)', color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
             Rechercher
           </button>
-          <Link href="/recherche" style={{ padding: '10px 6px', color: '#3157d5' }}>
+          <Link href="/recherche" style={{ padding: '10px 6px', color: 'var(--lien)' }}>
             Réinitialiser
           </Link>
         </div>
       </form>
-      <p style={{ fontSize: 13, color: '#667085' }}>Données disponibles du {dateFr(DEBUT_ARCHIVE)} au {dateFr(fin0)}.</p>
+      <p style={{ fontSize: 13, color: 'var(--texte-3)' }}>Données disponibles du {dateFr(DEBUT_ARCHIVE)} au {dateFr(fin0)}.</p>
 
       {erreur && (
-        <p role="alert" style={{ background: '#fef3f2', border: '1px solid #fecdca', color: '#912018', padding: 12, borderRadius: 10 }}>
+        <p role="alert" style={{ background: 'var(--erreur-bg)', border: '1px solid var(--erreur-bordure)', color: 'var(--erreur-texte)', padding: 12, borderRadius: 10 }}>
           {erreur}
         </p>
       )}
 
       {resultat && (
         <section id="resultats" style={{ marginTop: 20 }}>
-          <div style={{ background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 16 }}>
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--bordure)', borderRadius: 12, padding: 16 }}>
             <p style={{ margin: 0, fontSize: 26, fontWeight: 800 }}>
               {jours.length} <span style={{ fontSize: 16, fontWeight: 500 }}>jour{jours.length > 1 ? 's' : ''} concerné{jours.length > 1 ? 's' : ''}</span>
             </p>
-            <p style={{ margin: '4px 0 0', color: '#667085', fontSize: 14 }}>
+            <p style={{ margin: '4px 0 0', color: 'var(--texte-3)', fontSize: 14 }}>
               {nomPhen ?? 'Tous les phénomènes'} · {couleur ? COULEUR_INFOS[Number(couleur) as Couleur].nom : 'Orange et rouge'} · {region ? region.nom : departement ? `${departement} — ${nomDep}` : 'France entière'}
             </p>
-            {resultat.tronque && <p style={{ color: '#b54708' }}>Résultats limités aux 5 000 premiers jours : réduisez la période pour tout voir.</p>}
+            {resultat.tronque && <p style={{ color: 'var(--avert-texte)' }}>Résultats limités aux 5 000 premiers jours : réduisez la période pour tout voir.</p>}
             {(departement || region) && (
-              <p style={{ fontSize: 13, color: '#667085', marginBottom: 0 }}>
+              <p style={{ fontSize: 13, color: 'var(--texte-3)', marginBottom: 0 }}>
                 {region ? 'Pour une région, un jour est retenu dès qu’un de ses départements correspond, avec la couleur la plus élevée ; ' : 'Pour un département, la couleur est celle du département ; '} les phénomènes viennent des bulletins qui le citent. Le détail complet des bulletins est en cours d’importation.
               </p>
             )}
@@ -200,7 +200,7 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
                       <div style={{ display: 'flex', height: 16, width: `${(total / maxAnnee) * 100}%`, minWidth: 4, borderRadius: 4, overflow: 'hidden' }} title={`${total} jour(s)`}>
                         {([2, 3, 4] as Couleur[]).map((c) => (r[c] ? <span key={c} style={{ flex: r[c], background: COULEUR_INFOS[c].bg }} /> : null))}
                       </div>
-                      <span style={{ color: '#667085', fontSize: 14 }}>{total} j</span>
+                      <span style={{ color: 'var(--texte-3)', fontSize: 14 }}>{total} j</span>
                     </div>
                   );
                 })}
@@ -217,9 +217,9 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
 
               <h2>Journées concernées</h2>
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', border: '1px solid #e4e9f0', borderRadius: 10 }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--surface)', border: '1px solid var(--bordure)', borderRadius: 10 }}>
                   <thead>
-                    <tr style={{ textAlign: 'left', background: '#f8fafc' }}>
+                    <tr style={{ textAlign: 'left', background: 'var(--surface-2)' }}>
                       <th style={{ padding: 10 }}>Date</th>
                       <th style={{ padding: 10 }}>Couleur</th>
                       <th style={{ padding: 10 }}>Phénomènes</th>
@@ -232,19 +232,19 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
                       const [a, m] = j.date.split('-');
                       const cal = departement ? `/departement/${departement}/${a}/${Number(m)}` : `/national/${a}/${Number(m)}`;
                       return (
-                        <tr key={j.date} style={{ borderTop: '1px solid #eef2f6' }}>
+                        <tr key={j.date} style={{ borderTop: '1px solid var(--bordure-2)' }}>
                           <td style={{ padding: 10, whiteSpace: 'nowrap' }}>
-                            <Link href={cal} style={{ color: '#1f2937' }}>{dateFr(j.date)}</Link>
+                            <Link href={cal} style={{ color: 'var(--texte)' }}>{dateFr(j.date)}</Link>
                           </td>
                           <td style={{ padding: 10 }}><Pastille couleur={j.couleur} /></td>
-                          <td style={{ padding: 10 }}>{noms.length ? noms.join(', ') : <span style={{ color: '#98a2b3' }}>—</span>}</td>
+                          <td style={{ padding: 10 }}>{noms.length ? noms.join(', ') : <span style={{ color: 'var(--texte-4)' }}>—</span>}</td>
                           <td style={{ padding: 10, whiteSpace: 'nowrap' }}>
                             {j.nbBulletins > 0 ? (
-                              <Link href={`/jour/${j.date}${departement ? `?departement=${departement}` : ''}`} style={{ color: '#3157d5', fontWeight: 600 }}>
+                              <Link href={`/jour/${j.date}${departement ? `?departement=${departement}` : ''}`} style={{ color: 'var(--lien)', fontWeight: 600 }}>
                                 {j.nbBulletins} bulletin{j.nbBulletins > 1 ? 's' : ''} →
                               </Link>
                             ) : (
-                              <span style={{ color: '#98a2b3' }}>aucun dans l’archive</span>
+                              <span style={{ color: 'var(--texte-4)' }}>aucun dans l’archive</span>
                             )}
                           </td>
                         </tr>

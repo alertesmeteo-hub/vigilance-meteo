@@ -14,10 +14,10 @@ export default function DepartementIndex() {
               display: 'block',
               padding: '10px 14px',
               borderRadius: 10,
-              background: '#fff',
-              border: '1px solid #e4e9f0',
+              background: 'var(--surface)',
+              border: '1px solid var(--bordure)',
               textDecoration: 'none',
-              color: '#1f2937',
+              color: 'var(--texte)',
             }}
           >
             <strong>{d.code}</strong> — {d.nom}

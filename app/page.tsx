@@ -21,7 +21,7 @@ export default async function AccueilPage() {
 
       {dernierHeure ? (
         <>
-          <p style={{ color: '#667085' }}>Dernier bulletin : {dernierHeure} (échéance du jour)</p>
+          <p style={{ color: 'var(--texte-3)' }}>Dernier bulletin : {dernierHeure} (échéance du jour)</p>
 
           <div
             style={{
@@ -40,7 +40,7 @@ export default async function AccueilPage() {
           <h2>Carte de France</h2>
           <CarteVigilance couleurs={Object.fromEntries(lignesDernierBulletin.map((l) => [l.departement, l.couleur]))} />
           <LegendeCarte />
-          <p style={{ color: '#667085', fontSize: 14 }}>Survolez un département pour voir son niveau, cliquez pour ouvrir sa page.</p>
+          <p style={{ color: 'var(--texte-3)', fontSize: 14 }}>Survolez un département pour voir son niveau, cliquez pour ouvrir sa page.</p>
 
           <h2>Départements en alerte</h2>
           <div
@@ -71,7 +71,7 @@ export default async function AccueilPage() {
           {dernierTexte && (
             <details style={{ marginTop: 24 }}>
               <summary style={{ cursor: 'pointer', fontWeight: 700 }}>Texte de synthèse (brut, {dernierTexte.heure})</summary>
-              <pre style={{ whiteSpace: 'pre-wrap', background: '#fff', padding: 12, borderRadius: 8, fontSize: 12, overflowX: 'auto' }}>
+              <pre style={{ whiteSpace: 'pre-wrap', background: 'var(--surface)', padding: 12, borderRadius: 8, fontSize: 12, overflowX: 'auto' }}>
                 {dernierTexte.contenu.slice(0, 4000)}
               </pre>
             </details>

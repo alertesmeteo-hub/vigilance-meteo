@@ -28,12 +28,12 @@ export default async function JourPage({ params }: { params: Promise<{ date: str
   return (
     <div>
       <p style={{ margin: 0 }}>
-        <Link href="/recherche" style={{ color: '#3157d5' }}>← Recherche avancée</Link>
+        <Link href="/recherche" style={{ color: 'var(--lien)' }}>← Recherche avancée</Link>
       </p>
       <h1 style={{ textTransform: 'capitalize' }}>{dateFr(date)}</h1>
-      <p style={{ color: '#475467' }}>
+      <p style={{ color: 'var(--texte-2)' }}>
         {bulletins.length} bulletin{bulletins.length > 1 ? 's' : ''} de vigilance archivé{bulletins.length > 1 ? 's' : ''} ce jour-là ·{' '}
-        <Link href={`/national/${a}/${Number(m)}`} style={{ color: '#3157d5' }}>calendrier du mois</Link>
+        <Link href={`/national/${a}/${Number(m)}`} style={{ color: 'var(--lien)' }}>calendrier du mois</Link>
       </p>
 
       {departements.length > 0 && (
@@ -47,9 +47,9 @@ export default async function JourPage({ params }: { params: Promise<{ date: str
             <p>Aucun département en vigilance jaune, orange ou rouge ce jour-là.</p>
           ) : (
             <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', border: '1px solid #e4e9f0' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--surface)', border: '1px solid var(--bordure)' }}>
                 <thead>
-                  <tr style={{ textAlign: 'left', background: '#f8fafc' }}>
+                  <tr style={{ textAlign: 'left', background: 'var(--surface-2)' }}>
                     <th style={{ padding: 10 }}>Département</th>
                     <th style={{ padding: 10 }}>Couleur</th>
                     <th style={{ padding: 10 }}>Phénomènes</th>
@@ -58,26 +58,26 @@ export default async function JourPage({ params }: { params: Promise<{ date: str
                 </thead>
                 <tbody>
                   {enVigilance.map((d) => (
-                    <tr key={d.code} style={{ borderTop: '1px solid #eef2f6' }}>
+                    <tr key={d.code} style={{ borderTop: '1px solid var(--bordure-2)' }}>
                       <td style={{ padding: 10 }}>
-                        <Link href={`/departement/${d.code}`} style={{ color: '#3157d5' }}>{nomDep(d.code)} ({d.code})</Link>
+                        <Link href={`/departement/${d.code}`} style={{ color: 'var(--lien)' }}>{nomDep(d.code)} ({d.code})</Link>
                       </td>
                       <td style={{ padding: 10 }}>
                         <span style={{ background: COULEUR_INFOS[d.couleur as 1 | 2 | 3 | 4].bg, color: COULEUR_INFOS[d.couleur as 1 | 2 | 3 | 4].texte, padding: '2px 10px', borderRadius: 999, fontSize: 13, fontWeight: 700 }}>
                           {COULEUR_INFOS[d.couleur as 1 | 2 | 3 | 4].nom}
                         </span>
                       </td>
-                      <td style={{ padding: 10 }}>{libelle(d) || <span style={{ color: '#98a2b3' }}>non détaillé pour cette période</span>}</td>
+                      <td style={{ padding: 10 }}>{libelle(d) || <span style={{ color: 'var(--texte-4)' }}>non détaillé pour cette période</span>}</td>
                       <td style={{ padding: 10 }}>
                         {(d.bulletins ?? []).length === 0 ? (
-                          <span style={{ color: '#98a2b3' }}>—</span>
+                          <span style={{ color: 'var(--texte-4)' }}>—</span>
                         ) : (
                           // Une heure une seule fois : plusieurs bulletins publiés à la même minute sont regroupés (liste complète plus bas).
                           [...(d.bulletins ?? []).reduce((m, b) => m.set(b.heure.slice(0, 5), [...(m.get(b.heure.slice(0, 5)) ?? []), b]), new Map<string, NonNullable<typeof d.bulletins>>())].map(([h, groupe], i) => (
                             <span key={h}>
                               {i > 0 && ' · '}
-                              <Link href={`/bulletin/${groupe[0].base}/${groupe[0].id}`} style={{ color: '#3157d5', fontWeight: 600 }}>{h}</Link>
-                              {groupe.length > 1 && <span title={`${groupe.length} bulletins à cette heure : liste complète ci-dessous`} style={{ color: '#667085', fontSize: 12 }}> ×{groupe.length}</span>}
+                              <Link href={`/bulletin/${groupe[0].base}/${groupe[0].id}`} style={{ color: 'var(--lien)', fontWeight: 600 }}>{h}</Link>
+                              {groupe.length > 1 && <span title={`${groupe.length} bulletins à cette heure : liste complète ci-dessous`} style={{ color: 'var(--texte-3)', fontSize: 12 }}> ×{groupe.length}</span>}
                             </span>
                           ))
                         )}
@@ -92,9 +92,9 @@ export default async function JourPage({ params }: { params: Promise<{ date: str
       )}
 
       {bulletins.length === 0 ? (
-        <p style={{ background: '#fff', border: '1px solid #e4e9f0', borderRadius: 10, padding: 14 }}>
+        <p style={{ background: 'var(--surface)', border: '1px solid var(--bordure)', borderRadius: 10, padding: 14 }}>
           Aucun bulletin n’est disponible dans l’archive officielle pour ce jour.{' '}
-          <a href={`${ARCHIVE_OFFICIELLE}/vigilanceDate.php?dateVigi=${date}`} target="_blank" rel="noopener noreferrer" style={{ color: '#3157d5' }}>
+          <a href={`${ARCHIVE_OFFICIELLE}/vigilanceDate.php?dateVigi=${date}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--lien)' }}>
             Voir la page officielle
           </a>
           .
@@ -105,10 +105,10 @@ export default async function JourPage({ params }: { params: Promise<{ date: str
             <Link
               key={`${b.base}-${b.bulletinId}`}
               href={`/bulletin/${b.base}/${b.bulletinId}`}
-              style={{ display: 'grid', gridTemplateColumns: '64px 90px 1fr', gap: 10, alignItems: 'center', padding: '10px 14px', background: '#fff', border: '1px solid #e4e9f0', borderRadius: 10, textDecoration: 'none', color: '#1f2937' }}
+              style={{ display: 'grid', gridTemplateColumns: '64px 90px 1fr', gap: 10, alignItems: 'center', padding: '10px 14px', background: 'var(--surface)', border: '1px solid var(--bordure)', borderRadius: 10, textDecoration: 'none', color: 'var(--texte)' }}
             >
               <strong>{b.heure.slice(0, 5)}</strong>
-              <span style={{ color: '#667085' }}>{b.producteur}</span>
+              <span style={{ color: 'var(--texte-3)' }}>{b.producteur}</span>
               <span>{nomsDepuisMasque(b.masque).join(', ') || b.phenomenes}</span>
             </Link>
           ))}

@@ -47,7 +47,7 @@ export default function CalendrierMois({ annee, mois, jours, hrefMois, hrefJour,
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6 }}>
         {JOURS_SEMAINE.map((j) => (
-          <div key={j} style={{ textAlign: 'center', fontWeight: 700, fontSize: 13, color: '#667085' }}>
+          <div key={j} style={{ textAlign: 'center', fontWeight: 700, fontSize: 13, color: 'var(--texte-3)' }}>
             {j}
           </div>
         ))}
@@ -70,8 +70,8 @@ export default function CalendrierMois({ annee, mois, jours, hrefMois, hrefJour,
                 borderRadius: 12,
                 padding: '10px 6px',
                 textAlign: 'center',
-                background: infos?.bg ?? '#eef1f5',
-                color: infos?.texte ?? '#98a2b3',
+                background: infos?.bg ?? 'var(--bordure-2)',
+                color: infos?.texte ?? 'var(--texte-4)',
                 minHeight: 60,
               }}
             >
