@@ -118,6 +118,8 @@ export const rechercheApi = {
       `vigilance/recherche&debut=${p.debut}&fin=${p.fin}&couleur=${p.couleur}&phenomene=${p.phenomene}&departement=${p.departement}`,
     ),
 
+  departementsDuJour: (date: string) => appelerApi<{ code: string; couleur: number }[]>(`vigilance/departements-jour&date=${date}`).catch(() => []),
+
   bulletinsDuJour: (date: string) => appelerApi<BulletinListe[]>(`vigilance/bulletins-jour&date=${date}`),
 
   bulletin: (base: string, id: number) => appelerApi<BulletinComplet>(`vigilance/bulletin&base=${base}&id=${id}`),

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import CarteVigilance, { LegendeCarte } from '../../../components/CarteVigilance';
 import { rechercheApi } from '../../../lib/ovh-api-client';
 import { ARCHIVE_OFFICIELLE, nomsDepuisMasque } from '../../../lib/phenomenes';
 
@@ -13,7 +14,7 @@ export default async function JourPage({ params }: { params: Promise<{ date: str
   const { date } = await params;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(`${date}T00:00:00Z`)) || date < '2001-10-01') notFound();
 
-  const bulletins = await rechercheApi.bulletinsDuJour(date);
+  const [bulletins, departements] = await Promise.all([rechercheApi.bulletinsDuJour(date), rechercheApi.departementsDuJour(date)]);
   const [a, m] = date.split('-');
 
   return (
@@ -26,6 +27,14 @@ export default async function JourPage({ params }: { params: Promise<{ date: str
         {bulletins.length} bulletin{bulletins.length > 1 ? 's' : ''} de vigilance archivé{bulletins.length > 1 ? 's' : ''} ce jour-là ·{' '}
         <Link href={`/national/${a}/${Number(m)}`} style={{ color: '#3157d5' }}>calendrier du mois</Link>
       </p>
+
+      {departements.length > 0 && (
+        <>
+          <h2>Carte de vigilance du jour (couleur maximale)</h2>
+          <CarteVigilance couleurs={Object.fromEntries(departements.map((d) => [d.code, d.couleur]))} />
+          <LegendeCarte />
+        </>
+      )}
 
       {bulletins.length === 0 ? (
         <p style={{ background: '#fff', border: '1px solid #e4e9f0', borderRadius: 10, padding: 14 }}>
