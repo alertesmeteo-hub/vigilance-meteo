@@ -12,7 +12,7 @@ import type { Couleur } from '../lib/ovh-api-client';
 export default function CarteVigilance({ couleurs, details }: { couleurs: Record<string, number>; details?: Record<string, string> }) {
   return (
     <svg viewBox={CARTE_VIEWBOX} role="img" aria-label="Carte de vigilance météo des départements" style={{ width: '100%', maxWidth: 620, height: 'auto', display: 'block' }}>
-      <g stroke="#ffffff" strokeWidth={0.8} strokeLinejoin="round">
+      <g style={{ stroke: 'var(--surface)' }} strokeWidth={0.8} strokeLinejoin="round">
         {CARTE_DEPARTEMENTS.map(([code, nom, d]) => {
           const c = (couleurs[code] ?? 1) as Couleur;
           const info = COULEUR_INFOS[c] ?? COULEUR_INFOS[1];

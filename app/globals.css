@@ -1,0 +1,58 @@
+/* Thèmes clair et sombre : toutes les couleurs de l'interface passent par ces variables.
+   Les couleurs officielles de la vigilance (vert, jaune, orange, rouge) ne changent pas. */
+:root {
+  --fond: #f4f7fb;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --bordure: #e4e9f0;
+  --bordure-2: #eef2f6;
+  --bordure-champ: #cbd5e1;
+  --texte: #1f2937;
+  --texte-2: #475467;
+  --texte-3: #667085;
+  --texte-4: #98a2b3;
+  --lien: #3157d5;
+  --bouton: #3157d5;
+  --avert-bg: #fffaeb;
+  --avert-bordure: #fedf89;
+  --avert-texte: #b54708;
+  --erreur-bg: #fef3f2;
+  --erreur-bordure: #fecdca;
+  --erreur-texte: #912018;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --fond: #0f1720;
+  --surface: #182230;
+  --surface-2: #1d2939;
+  --bordure: #2f3b4c;
+  --bordure-2: #263140;
+  --bordure-champ: #475467;
+  --texte: #e6ebf2;
+  --texte-2: #c2cbd8;
+  --texte-3: #9aa7b8;
+  --texte-4: #7b8798;
+  --lien: #8fb0ff;
+  --bouton: #3157d5;
+  --avert-bg: #3a2c10;
+  --avert-bordure: #7a5a12;
+  --avert-texte: #f5c26b;
+  --erreur-bg: #3b1a17;
+  --erreur-bordure: #7a2a24;
+  --erreur-texte: #f4a29b;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--fond);
+  color: var(--texte);
+}
+a {
+  color: var(--lien);
+}
+input,
+select,
+textarea {
+  color: var(--texte);
+}

@@ -34,24 +34,24 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
   return (
     <div>
       <p style={{ margin: 0 }}>
-        <Link href={`/jour/${b.date}`} style={{ color: '#3157d5' }}>← Bulletins du {b.date}</Link>
+        <Link href={`/jour/${b.date}`} style={{ color: 'var(--lien)' }}>← Bulletins du {b.date}</Link>
       </p>
       <h1>
         Bulletin de vigilance — {b.date} à {b.heure.slice(0, 5)}
       </h1>
-      <p style={{ color: '#475467' }}>
+      <p style={{ color: 'var(--texte-2)' }}>
         {b.producteur} · {b.phenomenes}
       </p>
 
       {b.departements.length > 0 && (
-        <div style={{ background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 14, marginBottom: 16 }}>
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--bordure)', borderRadius: 12, padding: 14, marginBottom: 16 }}>
           {[1, 2, 3].filter((s) => parStatut.has(s)).map((s) => (
             <p key={s} style={{ margin: '4px 0' }}>
               <strong>{STATUTS_SUIVI[s]} :</strong>{' '}
               {(parStatut.get(s) ?? []).map((c, i) => (
                 <span key={c}>
                   {i > 0 && ', '}
-                  {c !== '99' ? <Link href={`/departement/${c}`} style={{ color: '#3157d5' }}>{nomDep(c)} ({c})</Link> : 'Andorre'}
+                  {c !== '99' ? <Link href={`/departement/${c}`} style={{ color: 'var(--lien)' }}>{nomDep(c)} ({c})</Link> : 'Andorre'}
                 </span>
               ))}
             </p>
@@ -67,7 +67,7 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
       )}
 
       {b.carte && b.carte.length > 0 && (
-        <div style={{ background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 14, marginBottom: 16 }}>
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--bordure)', borderRadius: 12, padding: 14, marginBottom: 16 }}>
           {([4, 3, 2] as const).map((c) => {
             const liste = b.carte!.filter((d) => d.couleur === c);
             if (liste.length === 0) return null;
@@ -77,22 +77,22 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
                 {liste.map((d, i) => (
                   <span key={d.code}>
                     {i > 0 && ', '}
-                    <Link href={`/departement/${d.code}`} style={{ color: '#3157d5' }}>{nomDep(d.code)} ({d.code})</Link>
+                    <Link href={`/departement/${d.code}`} style={{ color: 'var(--lien)' }}>{nomDep(d.code)} ({d.code})</Link>
                   </span>
                 ))}
               </p>
             );
           })}
-          <p style={{ margin: '8px 0 0', fontSize: 13, color: '#667085' }}>Les autres départements sont en vert.</p>
+          <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--texte-3)' }}>Les autres départements sont en vert.</p>
         </div>
       )}
 
       {b.texte ? (
-        <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 16, fontSize: 14, lineHeight: 1.5, fontFamily: 'ui-monospace, Consolas, monospace' }}>
+        <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', background: 'var(--surface)', border: '1px solid var(--bordure)', borderRadius: 12, padding: 16, fontSize: 14, lineHeight: 1.5, fontFamily: 'ui-monospace, Consolas, monospace' }}>
           {b.texte}
         </pre>
       ) : (
-        <p style={{ background: '#fffaeb', border: '1px solid #fedf89', borderRadius: 10, padding: 14 }}>
+        <p style={{ background: 'var(--avert-bg)', border: '1px solid var(--avert-bordure)', borderRadius: 10, padding: 14 }}>
           {b.carte
             ? 'Le texte de ce bulletin n’est pas disponible dans les données publiques pour cette heure.'
             : estCarteArchive
@@ -101,9 +101,9 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
         </p>
       )}
 
-      <p style={{ fontSize: 13, color: '#667085' }}>
+      <p style={{ fontSize: 13, color: 'var(--texte-3)' }}>
         Source : {b.carte ? 'Météo-France (données publiques data.gouv.fr)' : 'archive officielle de la vigilance, Météo-France'}{b.carte ? '.' : ' ·'}{' '}
-        {!b.carte && <a href={officiel} target="_blank" rel="noopener noreferrer" style={{ color: '#3157d5' }}>
+        {!b.carte && <a href={officiel} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--lien)' }}>
           {estCarteArchive ? 'ouvrir la carte originale' : 'ouvrir le bulletin original'}
         </a>}
         {!b.carte && '.'}
