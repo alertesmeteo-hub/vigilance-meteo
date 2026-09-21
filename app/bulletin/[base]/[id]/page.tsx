@@ -87,13 +87,15 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
         </div>
       )}
 
-      {b.carte ? null : b.texte ? (
+      {b.texte ? (
         <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 16, fontSize: 14, lineHeight: 1.5, fontFamily: 'ui-monospace, Consolas, monospace' }}>
           {b.texte}
         </pre>
       ) : (
         <p style={{ background: '#fffaeb', border: '1px solid #fedf89', borderRadius: 10, padding: 14 }}>
-          {estCarteArchive
+          {b.carte
+            ? 'Le texte de ce bulletin n’est pas disponible dans les données publiques pour cette heure.'
+            : estCarteArchive
             ? 'L’archive officielle ne contient, pour cette heure, que la carte de vigilance : il n’existe pas de texte de bulletin.'
             : 'Le texte de ce bulletin n’a pas encore été importé sur ce site.'}
         </p>
