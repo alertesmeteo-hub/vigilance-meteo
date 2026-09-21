@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               Calendrier par département
             </Link>
             <Link href="/recherche" style={{ textDecoration: 'none', color: 'var(--lien)' }}>
-              Recherche avancée
+              Recherche avancée (archive)
             </Link>
             <a href="https://outre-mers.alertes-meteo.com" style={{ textDecoration: 'none', color: 'var(--lien)' }}>
               Outre-mer
