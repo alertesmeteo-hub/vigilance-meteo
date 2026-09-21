@@ -24,6 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/recherche" style={{ textDecoration: 'none', color: '#3157d5' }}>
               Recherche avancée
             </Link>
+            <Link href="/outre-mer" style={{ textDecoration: 'none', color: '#3157d5' }}>
+              Outre-mer
+            </Link>
           </nav>
         </header>
         <main style={{ maxWidth: 960, margin: '0 auto', padding: '24px 20px' }}>{children}</main>
