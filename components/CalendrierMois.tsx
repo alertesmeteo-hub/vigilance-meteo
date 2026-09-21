@@ -11,6 +11,8 @@ interface Props {
   hrefMois: (annee: number, mois: number) => string;
   /** Lien d'un jour (carte de France et bulletins du jour). */
   hrefJour?: (date: string) => string;
+  /** Texte d'info-bulle par date (ex. les phénomènes du jour). */
+  infosJour?: Record<string, string>;
   titre: string;
 }
 
@@ -19,7 +21,7 @@ const NOMS_MOIS = [
   'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
 ];
 
-export default function CalendrierMois({ annee, mois, jours, hrefMois, hrefJour, titre }: Props) {
+export default function CalendrierMois({ annee, mois, jours, hrefMois, hrefJour, infosJour, titre }: Props) {
   const parJour = new Map(jours.map((j) => [j.date, j.couleur]));
   const premierJourMois = new Date(Date.UTC(annee, mois - 1, 1));
   const nbJours = new Date(Date.UTC(annee, mois, 0)).getUTCDate();
@@ -66,6 +68,7 @@ export default function CalendrierMois({ annee, mois, jours, hrefMois, hrefJour,
           return (
             <div
               key={date}
+              title={infosJour?.[date]}
               style={{
                 borderRadius: 12,
                 padding: '10px 6px',
@@ -76,7 +79,7 @@ export default function CalendrierMois({ annee, mois, jours, hrefMois, hrefJour,
               }}
             >
               {lien ? (
-                <Link href={lien} title={`Carte et bulletins du ${date}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
+                <Link href={lien} title={infosJour?.[date] ?? `Carte et bulletins du ${date}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
                   {contenu}
                 </Link>
               ) : (
