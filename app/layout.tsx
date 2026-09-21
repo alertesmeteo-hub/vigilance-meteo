@@ -32,9 +32,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/recherche" style={{ textDecoration: 'none', color: 'var(--lien)' }}>
               Recherche avancée
             </Link>
-            <Link href="/outre-mer" style={{ textDecoration: 'none', color: 'var(--lien)' }}>
+            <a href="https://outre-mers.alertes-meteo.com" style={{ textDecoration: 'none', color: 'var(--lien)' }}>
               Outre-mer
-            </Link>
+            </a>
+            <a href="https://carte-pollen.alertes-meteo.com" style={{ textDecoration: 'none', color: 'var(--lien)' }}>
+              Carte des pollens
+            </a>
             <ThemeToggle />
           </nav>
         </header>
