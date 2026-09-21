@@ -53,6 +53,7 @@ export default async function JourPage({ params }: { params: Promise<{ date: str
                     <th style={{ padding: 10 }}>Département</th>
                     <th style={{ padding: 10 }}>Couleur</th>
                     <th style={{ padding: 10 }}>Phénomènes</th>
+                    <th style={{ padding: 10 }}>Bulletins</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -67,6 +68,18 @@ export default async function JourPage({ params }: { params: Promise<{ date: str
                         </span>
                       </td>
                       <td style={{ padding: 10 }}>{libelle(d) || <span style={{ color: '#98a2b3' }}>non détaillé pour cette période</span>}</td>
+                      <td style={{ padding: 10 }}>
+                        {(d.bulletins ?? []).length === 0 ? (
+                          <span style={{ color: '#98a2b3' }}>—</span>
+                        ) : (
+                          (d.bulletins ?? []).map((b, i) => (
+                            <span key={`${b.base}-${b.id}`}>
+                              {i > 0 && ' · '}
+                              <Link href={`/bulletin/${b.base}/${b.id}`} style={{ color: '#3157d5', fontWeight: 600 }}>{b.heure.slice(0, 5)}</Link>
+                            </span>
+                          ))
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
