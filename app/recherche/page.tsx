@@ -98,9 +98,9 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
         style={{ background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 16, display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))' }}
       >
         <input type="hidden" name="go" value="1" />
-        <label style={champ}>
+        <label style={{ ...champ, gridColumn: '1 / -1' }}>
           Couleur
-          <select name="couleur" defaultValue={couleur} style={saisie}>
+          <select name="couleur" defaultValue={couleur} style={{ ...saisie, fontSize: 17, padding: '12px 12px' }}>
             <option value="">Toutes les vigilances (orange et rouge)</option>
             <option value="2">Jaune (fiable à partir de 2023)</option>
             <option value="3">Orange</option>
@@ -129,14 +129,16 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
             ))}
           </select>
         </label>
-        <label style={champ}>
+        <div style={{ gridColumn: '1 / -1', display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+        <label style={{ ...champ, flex: '1 1 200px' }}>
           Date de début
           <input type="date" name="debut" defaultValue={debut} min={DEBUT_ARCHIVE} max={fin0} style={saisie} />
         </label>
-        <label style={champ}>
+        <label style={{ ...champ, flex: '1 1 200px' }}>
           Date de fin
           <input type="date" name="fin" defaultValue={fin} min={DEBUT_ARCHIVE} max={fin0} style={saisie} />
         </label>
+        </div>
         <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10 }}>
           <button type="submit" style={{ padding: '10px 18px', borderRadius: 8, border: 0, background: '#3157d5', color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
             Rechercher
