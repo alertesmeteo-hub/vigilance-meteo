@@ -1,6 +1,7 @@
 import { ovhApi } from '../lib/ovh-api-client';
 import { COULEUR_INFOS } from '../lib/couleurs';
 import { DEPARTEMENTS } from '../lib/departements';
+import CarteVigilance, { LegendeCarte } from '../components/CarteVigilance';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,6 +37,12 @@ export default async function AccueilPage() {
             Niveau maximal : {COULEUR_INFOS[couleurMax].nom}
           </div>
 
+          <h2>Carte de France</h2>
+          <CarteVigilance couleurs={Object.fromEntries(lignesDernierBulletin.map((l) => [l.departement, l.couleur]))} />
+          <LegendeCarte />
+          <p style={{ color: '#667085', fontSize: 14 }}>Survolez un département pour voir son niveau, cliquez pour ouvrir sa page.</p>
+
+          <h2>Départements en alerte</h2>
           <div
             style={{
               display: 'grid',

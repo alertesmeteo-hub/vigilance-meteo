@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DEPARTEMENTS } from '../../../../lib/departements';
 import { rechercheApi, type BulletinComplet } from '../../../../lib/ovh-api-client';
+import CarteVigilance, { LegendeCarte } from '../../../../components/CarteVigilance';
 import { COULEUR_INFOS } from '../../../../lib/couleurs';
 import { ARCHIVE_OFFICIELLE, STATUTS_SUIVI } from '../../../../lib/phenomenes';
 
@@ -52,6 +53,13 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
             </p>
           ))}
         </div>
+      )}
+
+      {b.carte && b.carte.length > 0 && (
+        <>
+          <CarteVigilance couleurs={Object.fromEntries(b.carte.map((d) => [d.code, d.couleur]))} />
+          <LegendeCarte />
+        </>
       )}
 
       {b.carte && b.carte.length > 0 && (
