@@ -18,6 +18,7 @@ export default async function CalendrierNationalPage({ params }: { params: Promi
       mois={mois}
       jours={jours}
       hrefMois={(a, m) => `/national/${a}/${m}`}
+      hrefJour={(d) => `/jour/${d}`}
       titre="Vigilance nationale"
     />
   );

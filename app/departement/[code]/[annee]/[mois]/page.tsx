@@ -29,6 +29,7 @@ export default async function CalendrierDepartementPage({
         annee={annee}
         mois={mois}
         jours={jours}
+        hrefJour={(d) => `/jour/${d}`}
         hrefMois={(a, m) => `/departement/${departement}/${a}/${m}`}
         titre={`${departement} — ${infos.nom}`}
       />
