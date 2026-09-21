@@ -72,10 +72,12 @@ export default async function JourPage({ params }: { params: Promise<{ date: str
                         {(d.bulletins ?? []).length === 0 ? (
                           <span style={{ color: '#98a2b3' }}>—</span>
                         ) : (
-                          (d.bulletins ?? []).map((b, i) => (
-                            <span key={`${b.base}-${b.id}`}>
+                          // Une heure une seule fois : plusieurs bulletins publiés à la même minute sont regroupés (liste complète plus bas).
+                          [...(d.bulletins ?? []).reduce((m, b) => m.set(b.heure.slice(0, 5), [...(m.get(b.heure.slice(0, 5)) ?? []), b]), new Map<string, NonNullable<typeof d.bulletins>>())].map(([h, groupe], i) => (
+                            <span key={h}>
                               {i > 0 && ' · '}
-                              <Link href={`/bulletin/${b.base}/${b.id}`} style={{ color: '#3157d5', fontWeight: 600 }}>{b.heure.slice(0, 5)}</Link>
+                              <Link href={`/bulletin/${groupe[0].base}/${groupe[0].id}`} style={{ color: '#3157d5', fontWeight: 600 }}>{h}</Link>
+                              {groupe.length > 1 && <span title={`${groupe.length} bulletins à cette heure : liste complète ci-dessous`} style={{ color: '#667085', fontSize: 12 }}> ×{groupe.length}</span>}
                             </span>
                           ))
                         )}
