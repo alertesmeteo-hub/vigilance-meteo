@@ -9,6 +9,8 @@ interface Props {
   mois: number; // 1-12
   jours: { date: string; couleur: Couleur }[];
   hrefMois: (annee: number, mois: number) => string;
+  /** Lien d'un jour (carte de France et bulletins du jour). */
+  hrefJour?: (date: string) => string;
   titre: string;
 }
 
@@ -17,7 +19,7 @@ const NOMS_MOIS = [
   'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
 ];
 
-export default function CalendrierMois({ annee, mois, jours, hrefMois, titre }: Props) {
+export default function CalendrierMois({ annee, mois, jours, hrefMois, hrefJour, titre }: Props) {
   const parJour = new Map(jours.map((j) => [j.date, j.couleur]));
   const premierJourMois = new Date(Date.UTC(annee, mois - 1, 1));
   const nbJours = new Date(Date.UTC(annee, mois, 0)).getUTCDate();
@@ -54,6 +56,13 @@ export default function CalendrierMois({ annee, mois, jours, hrefMois, titre }: 
           const date = `${annee}-${String(mois).padStart(2, '0')}-${String(jour).padStart(2, '0')}`;
           const couleur = parJour.get(date);
           const infos = couleur ? COULEUR_INFOS[couleur] : null;
+          const lien = hrefJour && date >= '2001-10-01' ? hrefJour(date) : null;
+          const contenu = (
+            <>
+              <div style={{ fontWeight: 700 }}>{jour}</div>
+              <div style={{ fontSize: 11 }}>{infos?.nom ?? '—'}</div>
+            </>
+          );
           return (
             <div
               key={date}
@@ -66,8 +75,13 @@ export default function CalendrierMois({ annee, mois, jours, hrefMois, titre }: 
                 minHeight: 60,
               }}
             >
-              <div style={{ fontWeight: 700 }}>{jour}</div>
-              <div style={{ fontSize: 11 }}>{infos?.nom ?? '—'}</div>
+              {lien ? (
+                <Link href={lien} title={`Carte et bulletins du ${date}`} style={{ color: 'inherit', textDecoration: 'none', display: 'block' }}>
+                  {contenu}
+                </Link>
+              ) : (
+                contenu
+              )}
             </div>
           );
         })}

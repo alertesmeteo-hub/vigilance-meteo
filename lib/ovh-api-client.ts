@@ -97,6 +97,8 @@ export interface BulletinComplet {
   niveauMax: number | null;
   /** statut : 1 début de suivi, 2 maintien, 3 fin. */
   departements: { code: string; statut: number }[];
+  /** Bulletins récents (base « carte ») : couleur de chaque département. */
+  carte?: { code: string; couleur: number }[];
 }
 
 export interface ParamsRecherche {
@@ -115,6 +117,8 @@ export const rechercheApi = {
     appelerApi<{ jours: RechercheJour[]; tronque: boolean }>(
       `vigilance/recherche&debut=${p.debut}&fin=${p.fin}&couleur=${p.couleur}&phenomene=${p.phenomene}&departement=${p.departement}`,
     ),
+
+  departementsDuJour: (date: string) => appelerApi<{ code: string; couleur: number; phenomenes?: { n: number; c: number }[]; bulletins?: { base: string; id: number; heure: string }[] }[]>(`vigilance/departements-jour&date=${date}`).catch(() => []),
 
   bulletinsDuJour: (date: string) => appelerApi<BulletinListe[]>(`vigilance/bulletins-jour&date=${date}`),
 

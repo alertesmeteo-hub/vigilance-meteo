@@ -3,6 +3,7 @@ import { COULEUR_INFOS } from '../../lib/couleurs';
 import { DEPARTEMENTS } from '../../lib/departements';
 import { rechercheApi, type Couleur, type RechercheJour } from '../../lib/ovh-api-client';
 import { nomsDepuisMasque, PHENOMENES } from '../../lib/phenomenes';
+import { REGIONS } from '../../lib/regions';
 
 export const dynamic = 'force-dynamic';
 export const metadata = {
@@ -10,7 +11,7 @@ export const metadata = {
   description: 'Retrouvez toutes les journées de vigilance orange ou rouge depuis 2001 par période, département et phénomène, puis ouvrez le bulletin correspondant.',
 };
 
-type Params = { couleur?: string; departement?: string; phenomene?: string; debut?: string; fin?: string; go?: string };
+type Params = { couleur?: string; region?: string; departement?: string; phenomene?: string; debut?: string; fin?: string; go?: string };
 
 const DEBUT_ARCHIVE = '2001-10-01';
 const aujourdhui = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date());
@@ -54,6 +55,9 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
   const fin0 = aujourdhui();
   const couleur = ['2', '3', '4'].includes(sp.couleur ?? '') ? (sp.couleur as string) : '';
   const departement = DEPARTEMENTS.some((d) => d.code === sp.departement) ? (sp.departement as string) : '';
+  // Une région regroupe ses départements ; si un département est choisi, il l'emporte.
+  const regionChoisie = REGIONS.find((r) => r.code === sp.region);
+  const region = departement ? undefined : regionChoisie;
   const phenomene = PHENOMENES.some((p) => p.numero === sp.phenomene) ? (sp.phenomene as string) : '';
   const debut = dateValide(sp.debut) ? (sp.debut as string) : DEBUT_ARCHIVE;
   const fin = dateValide(sp.fin) ? (sp.fin as string) : fin0;
@@ -65,7 +69,7 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
     else if (debut < DEBUT_ARCHIVE) erreur = `Les archives commencent le ${dateFr(DEBUT_ARCHIVE)}.`;
     else {
       try {
-        resultat = await rechercheApi.recherche({ debut, fin, couleur, phenomene, departement });
+        resultat = await rechercheApi.recherche({ debut, fin, couleur, phenomene, departement: region ? region.departements.join(',') : departement });
       } catch (e) {
         erreur = 'La recherche est momentanément indisponible. Réessayez dans quelques instants.';
         console.error('recherche vigilance', e);
@@ -98,13 +102,24 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
         style={{ background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 16, display: 'grid', gap: 14, gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))' }}
       >
         <input type="hidden" name="go" value="1" />
-        <label style={champ}>
+        <label style={{ ...champ, gridColumn: '1 / -1' }}>
           Couleur
-          <select name="couleur" defaultValue={couleur} style={saisie}>
+          <select name="couleur" defaultValue={couleur} style={{ ...saisie, fontSize: 17, padding: '12px 12px' }}>
             <option value="">Toutes les vigilances (orange et rouge)</option>
             <option value="2">Jaune (fiable à partir de 2023)</option>
             <option value="3">Orange</option>
             <option value="4">Rouge</option>
+          </select>
+        </label>
+        <label style={champ}>
+          Région
+          <select name="region" defaultValue={region?.code ?? ''} style={saisie}>
+            <option value="">Toutes les régions</option>
+            {REGIONS.map((r) => (
+              <option key={r.code} value={r.code}>
+                {r.nom}
+              </option>
+            ))}
           </select>
         </label>
         <label style={champ}>
@@ -129,14 +144,16 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
             ))}
           </select>
         </label>
-        <label style={champ}>
+        <div style={{ gridColumn: '1 / -1', display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+        <label style={{ ...champ, flex: '1 1 200px' }}>
           Date de début
           <input type="date" name="debut" defaultValue={debut} min={DEBUT_ARCHIVE} max={fin0} style={saisie} />
         </label>
-        <label style={champ}>
+        <label style={{ ...champ, flex: '1 1 200px' }}>
           Date de fin
           <input type="date" name="fin" defaultValue={fin} min={DEBUT_ARCHIVE} max={fin0} style={saisie} />
         </label>
+        </div>
         <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10 }}>
           <button type="submit" style={{ padding: '10px 18px', borderRadius: 8, border: 0, background: '#3157d5', color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}>
             Rechercher
@@ -161,12 +178,12 @@ export default async function RecherchePage({ searchParams }: { searchParams: Pr
               {jours.length} <span style={{ fontSize: 16, fontWeight: 500 }}>jour{jours.length > 1 ? 's' : ''} concerné{jours.length > 1 ? 's' : ''}</span>
             </p>
             <p style={{ margin: '4px 0 0', color: '#667085', fontSize: 14 }}>
-              {nomPhen ?? 'Tous les phénomènes'} · {couleur ? COULEUR_INFOS[Number(couleur) as Couleur].nom : 'Orange et rouge'} · {departement ? `${departement} — ${nomDep}` : 'France entière'}
+              {nomPhen ?? 'Tous les phénomènes'} · {couleur ? COULEUR_INFOS[Number(couleur) as Couleur].nom : 'Orange et rouge'} · {region ? region.nom : departement ? `${departement} — ${nomDep}` : 'France entière'}
             </p>
             {resultat.tronque && <p style={{ color: '#b54708' }}>Résultats limités aux 5 000 premiers jours : réduisez la période pour tout voir.</p>}
-            {departement && (
+            {(departement || region) && (
               <p style={{ fontSize: 13, color: '#667085', marginBottom: 0 }}>
-                Pour un département, la couleur est celle du département ; les phénomènes viennent des bulletins qui le citent. Le détail complet des bulletins est en cours d’importation.
+                {region ? 'Pour une région, un jour est retenu dès qu’un de ses départements correspond, avec la couleur la plus élevée ; ' : 'Pour un département, la couleur est celle du département ; '} les phénomènes viennent des bulletins qui le citent. Le détail complet des bulletins est en cours d’importation.
               </p>
             )}
           </div>

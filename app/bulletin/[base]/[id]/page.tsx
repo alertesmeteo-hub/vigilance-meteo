@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DEPARTEMENTS } from '../../../../lib/departements';
 import { rechercheApi, type BulletinComplet } from '../../../../lib/ovh-api-client';
+import CarteVigilance, { LegendeCarte } from '../../../../components/CarteVigilance';
+import { COULEUR_INFOS } from '../../../../lib/couleurs';
 import { ARCHIVE_OFFICIELLE, STATUTS_SUIVI } from '../../../../lib/phenomenes';
 
 export const dynamic = 'force-dynamic';
@@ -21,7 +23,11 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
     notFound(); // bulletin inconnu (l'API répond 404)
   }
 
-  const officiel = `${ARCHIVE_OFFICIELLE}/vigi.php?type=bulletin&id=${id}&base=${base}`;
+  // Base « carte_xxx » : carte de l'archive officielle, sans texte de bulletin.
+  const estCarteArchive = base.startsWith('carte_');
+  const officiel = estCarteArchive
+    ? `${ARCHIVE_OFFICIELLE}/vigi.php?type=carte&id=${id}&base=${base.slice(6)}`
+    : `${ARCHIVE_OFFICIELLE}/vigi.php?type=bulletin&id=${id}&base=${base}`;
   const parStatut = new Map<number, string[]>();
   for (const d of b.departements) parStatut.set(d.statut, [...(parStatut.get(d.statut) ?? []), d.code]);
 
@@ -53,22 +59,54 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
         </div>
       )}
 
+      {b.carte && b.carte.length > 0 && (
+        <>
+          <CarteVigilance couleurs={Object.fromEntries(b.carte.map((d) => [d.code, d.couleur]))} />
+          <LegendeCarte />
+        </>
+      )}
+
+      {b.carte && b.carte.length > 0 && (
+        <div style={{ background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 14, marginBottom: 16 }}>
+          {([4, 3, 2] as const).map((c) => {
+            const liste = b.carte!.filter((d) => d.couleur === c);
+            if (liste.length === 0) return null;
+            return (
+              <p key={c} style={{ margin: '6px 0' }}>
+                <strong style={{ background: COULEUR_INFOS[c].bg, color: COULEUR_INFOS[c].texte, padding: '2px 10px', borderRadius: 999 }}>{COULEUR_INFOS[c].nom}</strong>{' '}
+                {liste.map((d, i) => (
+                  <span key={d.code}>
+                    {i > 0 && ', '}
+                    <Link href={`/departement/${d.code}`} style={{ color: '#3157d5' }}>{nomDep(d.code)} ({d.code})</Link>
+                  </span>
+                ))}
+              </p>
+            );
+          })}
+          <p style={{ margin: '8px 0 0', fontSize: 13, color: '#667085' }}>Les autres départements sont en vert.</p>
+        </div>
+      )}
+
       {b.texte ? (
         <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 16, fontSize: 14, lineHeight: 1.5, fontFamily: 'ui-monospace, Consolas, monospace' }}>
           {b.texte}
         </pre>
       ) : (
         <p style={{ background: '#fffaeb', border: '1px solid #fedf89', borderRadius: 10, padding: 14 }}>
-          Le texte de ce bulletin n’a pas encore été importé sur ce site.
+          {b.carte
+            ? 'Le texte de ce bulletin n’est pas disponible dans les données publiques pour cette heure.'
+            : estCarteArchive
+            ? 'L’archive officielle ne contient, pour cette heure, que la carte de vigilance : il n’existe pas de texte de bulletin.'
+            : 'Le texte de ce bulletin n’a pas encore été importé sur ce site.'}
         </p>
       )}
 
       <p style={{ fontSize: 13, color: '#667085' }}>
-        Source : archive officielle de la vigilance, Météo-France ·{' '}
-        <a href={officiel} target="_blank" rel="noopener noreferrer" style={{ color: '#3157d5' }}>
-          ouvrir le bulletin original
-        </a>
-        .
+        Source : {b.carte ? 'Météo-France (données publiques data.gouv.fr)' : 'archive officielle de la vigilance, Météo-France'}{b.carte ? '.' : ' ·'}{' '}
+        {!b.carte && <a href={officiel} target="_blank" rel="noopener noreferrer" style={{ color: '#3157d5' }}>
+          {estCarteArchive ? 'ouvrir la carte originale' : 'ouvrir le bulletin original'}
+        </a>}
+        {!b.carte && '.'}
       </p>
     </div>
   );
