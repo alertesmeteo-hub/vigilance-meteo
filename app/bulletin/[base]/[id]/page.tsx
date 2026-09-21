@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DEPARTEMENTS } from '../../../../lib/departements';
 import { rechercheApi, type BulletinComplet } from '../../../../lib/ovh-api-client';
+import { COULEUR_INFOS } from '../../../../lib/couleurs';
 import { ARCHIVE_OFFICIELLE, STATUTS_SUIVI } from '../../../../lib/phenomenes';
 
 export const dynamic = 'force-dynamic';
@@ -53,7 +54,28 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
         </div>
       )}
 
-      {b.texte ? (
+      {b.carte && b.carte.length > 0 && (
+        <div style={{ background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 14, marginBottom: 16 }}>
+          {([4, 3, 2] as const).map((c) => {
+            const liste = b.carte!.filter((d) => d.couleur === c);
+            if (liste.length === 0) return null;
+            return (
+              <p key={c} style={{ margin: '6px 0' }}>
+                <strong style={{ background: COULEUR_INFOS[c].bg, color: COULEUR_INFOS[c].texte, padding: '2px 10px', borderRadius: 999 }}>{COULEUR_INFOS[c].nom}</strong>{' '}
+                {liste.map((d, i) => (
+                  <span key={d.code}>
+                    {i > 0 && ', '}
+                    <Link href={`/departement/${d.code}`} style={{ color: '#3157d5' }}>{nomDep(d.code)} ({d.code})</Link>
+                  </span>
+                ))}
+              </p>
+            );
+          })}
+          <p style={{ margin: '8px 0 0', fontSize: 13, color: '#667085' }}>Les autres départements sont en vert.</p>
+        </div>
+      )}
+
+      {b.carte ? null : b.texte ? (
         <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', background: '#fff', border: '1px solid #e4e9f0', borderRadius: 12, padding: 16, fontSize: 14, lineHeight: 1.5, fontFamily: 'ui-monospace, Consolas, monospace' }}>
           {b.texte}
         </pre>
@@ -64,11 +86,11 @@ export default async function BulletinPage({ params }: { params: Promise<{ base:
       )}
 
       <p style={{ fontSize: 13, color: '#667085' }}>
-        Source : archive officielle de la vigilance, Météo-France ·{' '}
-        <a href={officiel} target="_blank" rel="noopener noreferrer" style={{ color: '#3157d5' }}>
+        Source : {b.carte ? 'Météo-France (données publiques data.gouv.fr)' : 'archive officielle de la vigilance, Météo-France'}{b.carte ? '.' : ' ·'}{' '}
+        {!b.carte && <a href={officiel} target="_blank" rel="noopener noreferrer" style={{ color: '#3157d5' }}>
           ouvrir le bulletin original
-        </a>
-        .
+        </a>}
+        {!b.carte && '.'}
       </p>
     </div>
   );

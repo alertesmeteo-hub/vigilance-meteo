@@ -97,6 +97,8 @@ export interface BulletinComplet {
   niveauMax: number | null;
   /** statut : 1 début de suivi, 2 maintien, 3 fin. */
   departements: { code: string; statut: number }[];
+  /** Bulletins récents (base « carte ») : couleur de chaque département. */
+  carte?: { code: string; couleur: number }[];
 }
 
 export interface ParamsRecherche {
