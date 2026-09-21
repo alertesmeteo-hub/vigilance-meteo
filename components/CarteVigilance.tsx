@@ -7,8 +7,9 @@ import type { Couleur } from '../lib/ovh-api-client';
  * Carte de France métropolitaine : chaque département est coloré selon sa vigilance,
  * avec une info-bulle au survol (nom, code, couleur) et un lien vers la page du département.
  * `couleurs` : code département → couleur (1 à 4) ; un département absent est affiché en vert.
+ * `details` : texte ajouté à l'info-bulle (ex. les phénomènes en cours), par code département.
  */
-export default function CarteVigilance({ couleurs }: { couleurs: Record<string, number> }) {
+export default function CarteVigilance({ couleurs, details }: { couleurs: Record<string, number>; details?: Record<string, string> }) {
   return (
     <svg viewBox={CARTE_VIEWBOX} role="img" aria-label="Carte de vigilance météo des départements" style={{ width: '100%', maxWidth: 620, height: 'auto', display: 'block' }}>
       <g stroke="#ffffff" strokeWidth={0.8} strokeLinejoin="round">
@@ -18,7 +19,8 @@ export default function CarteVigilance({ couleurs }: { couleurs: Record<string, 
           return (
             <Link key={code} href={`/departement/${code}`} aria-label={`${nom} (${code}) : ${info.nom}`}>
               <path d={d} fill={info.bg} style={{ cursor: 'pointer' }}>
-                <title>{`${nom} (${code}) — ${info.nom}`}</title>
+                <title>{`${nom} (${code}) — ${info.nom}${details?.[code] ? `
+${details[code]}` : ''}`}</title>
               </path>
             </Link>
           );
