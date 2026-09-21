@@ -21,7 +21,7 @@ export default async function JourPage({ params }: { params: Promise<{ date: str
   const nomDep = (code: string) => DEPARTEMENTS.find((d) => d.code === code)?.nom ?? code;
   const nomPhen = (n: number) => PHENOMENES.find((p) => Number(p.numero) === n)?.nom ?? `Phénomène ${n}`;
   const libelle = (d: (typeof departements)[number]) =>
-    (d.phenomenes ?? []).map((p) => `${nomPhen(p.n)} (${COULEUR_INFOS[p.c as 1 | 2 | 3 | 4]?.nom.toLowerCase() ?? p.c})`).join(', ');
+    (d.phenomenes ?? []).map((p) => (p.c >= 1 ? `${nomPhen(p.n)} (${COULEUR_INFOS[p.c as 1 | 2 | 3 | 4].nom.toLowerCase()})` : nomPhen(p.n))).join(', ');
   const details = Object.fromEntries(departements.filter((d) => d.couleur >= 2).map((d) => [d.code, libelle(d)]));
   const enVigilance = departements.filter((d) => d.couleur >= 2).sort((x, y) => y.couleur - x.couleur || x.code.localeCompare(y.code));
 
