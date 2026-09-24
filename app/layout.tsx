@@ -38,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="https://carte-pollen.alertes-meteo.com" style={{ textDecoration: 'none', color: 'var(--lien)' }}>
               Carte des pollens
             </a>
+            <a href="https://secheresse.alertes-meteo.com" style={{ textDecoration: 'none', color: 'var(--lien)' }}>Sécheresse</a>
             <a href="https://alertes-meteo.systeme.io/meteodujour" style={{ textDecoration: 'none', color: 'var(--lien)' }}>Météo par mail</a>
             <a href="https://outils.alertes-meteo.com/" style={{ textDecoration: 'none', color: 'var(--lien)' }}>Outils</a>
             <ThemeToggle />
