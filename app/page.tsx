@@ -1,3 +1,4 @@
+import NewsletterBrevo from '../components/NewsletterBrevo';
 import Link from 'next/link';
 import CarteVigilance, { LegendeCarte } from '../components/CarteVigilance';
 import { COULEUR_INFOS } from '../lib/couleurs';
@@ -80,6 +81,7 @@ export default async function AccueilPage() {
           </table>
         </div>
       )}
+      <NewsletterBrevo />
     </div>
   );
 }
