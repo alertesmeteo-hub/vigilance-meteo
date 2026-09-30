@@ -65,17 +65,17 @@ export async function dernierBulletin(): Promise<DernierBulletin | null> {
       const jour = jourUtc(decalage);
       const listing = await fetch(`${BASE}/${jour}/`, { next: { revalidate: 300 } });
       if (!listing.ok) continue;
-      const dossiers = [...(await listing.text()).matchAll(/href="[^"]*\/(\d{6})\/"/g)].map((m) => m[1]).sort();
-      const dernier = dossiers.at(-1);
-      if (!dernier) continue;
-      const r = await fetch(`${BASE}/${jour}/${dernier}/CDP_CARTE_EXTERNE.json`, { next: { revalidate: 300 } });
-      if (!r.ok) continue;
-      const json = (await r.json()) as { periods?: Periode[]; product?: { periods?: Periode[] } };
-      const periodes = json.periods ?? json.product?.periods ?? [];
-      const j = periodes.find((p) => p.echeance === 'J');
-      if (!j) continue;
-      const d1 = periodes.find((p) => p.echeance === 'J1');
-      return { dossier: `${jour}/${dernier}`, jour: versEcheance(j), demain: d1 ? versEcheance(d1) : null };
+      const dossiers = [...(await listing.text()).matchAll(/href="[^"]*\/(\d{6})\/"/g)].map((m) => m[1]).sort().reverse();
+      for (const dossier of dossiers) {
+        const r = await fetch(`${BASE}/${jour}/${dossier}/CDP_CARTE_EXTERNE.json`, { next: { revalidate: 300 } });
+        if (!r.ok) continue;
+        const json = (await r.json()) as { periods?: Periode[]; product?: { periods?: Periode[] } };
+        const periodes = json.periods ?? json.product?.periods ?? [];
+        const j = periodes.find((p) => p.echeance === 'J');
+        if (!j) continue;
+        const d1 = periodes.find((p) => p.echeance === 'J1');
+        return { dossier: `${jour}/${dossier}`, jour: versEcheance(j), demain: d1 ? versEcheance(d1) : null };
+      }
     }
   } catch {
     /* source injoignable : la page affiche un message plutôt qu'une erreur */
