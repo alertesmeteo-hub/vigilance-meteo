@@ -1,0 +1,63 @@
+name: Historique des vigilances par département
+
+on:
+  workflow_dispatch:
+    inputs:
+      departements:
+        description: "Codes département séparés par des espaces"
+        default: "66"
+  schedule:
+    # Une fois par jour, après le bulletin de 6 h (heure de Paris).
+    - cron: "17 5 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: historique
+  cancel-in-progress: false
+
+jobs:
+  historique:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Lire les calendriers depuis octobre 2001
+        run: python scripts/historique_departements.py --out build/historique ${{ github.event.inputs.departements || '66' }}
+
+      - name: Publier la branche historique-data
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          publish_dir="$(mktemp -d)"
+          # On garde les départements déjà publiés qui ne sont pas recalculés ce coup-ci.
+          if git clone -q --depth 1 --branch historique-data "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$publish_dir/old" 2>/dev/null; then
+            mkdir -p build/historique/departements
+            for f in "$publish_dir"/old/departements/*.json; do
+              [ -e "build/historique/departements/$(basename "$f")" ] || cp "$f" build/historique/departements/
+            done
+          fi
+          python - <<'PY'
+          import json, pathlib
+          root = pathlib.Path("build/historique")
+          idx = {}
+          for f in sorted((root / "departements").glob("*.json")):
+              d = json.loads(f.read_text(encoding="utf-8"))
+              idx[d["department"]] = {"file": f"departements/{f.name}", "fin": d["fin"],
+                                      **{k: sum(1 for j in d["jours"] if j[1] == c) for k, c in (("jaune", 2), ("orange", 3), ("rouge", 4))}}
+          (root / "index.json").write_text(json.dumps({"departements": idx}, ensure_ascii=False, indent=1), encoding="utf-8")
+          PY
+          git init -q -b historique-data "$publish_dir/new"
+          cp -R build/historique/. "$publish_dir/new/"
+          cd "$publish_dir/new"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -q -m "Historique des vigilances $(date -u +'%Y-%m-%d')"
+          git push -q --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:historique-data
