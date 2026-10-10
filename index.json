@@ -1,0 +1,39 @@
+{
+ "departements": {
+  "09": {
+   "file": "departements/09.json",
+   "fin": "2026-10-08",
+   "jaune": 4560,
+   "orange": 286,
+   "rouge": 2
+  },
+  "11": {
+   "file": "departements/11.json",
+   "fin": "2026-10-08",
+   "jaune": 3345,
+   "orange": 271,
+   "rouge": 11
+  },
+  "30": {
+   "file": "departements/30.json",
+   "fin": "2026-10-08",
+   "jaune": 2873,
+   "orange": 419,
+   "rouge": 16
+  },
+  "34": {
+   "file": "departements/34.json",
+   "fin": "2026-10-08",
+   "jaune": 2513,
+   "orange": 367,
+   "rouge": 20
+  },
+  "66": {
+   "file": "departements/66.json",
+   "fin": "2026-10-10",
+   "jaune": 4797,
+   "orange": 243,
+   "rouge": 7
+  }
+ }
+}
